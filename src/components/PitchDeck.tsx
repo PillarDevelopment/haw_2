@@ -61,18 +61,27 @@ const slides = [
     title: "Финал",
     content: "Через 5 лет вы либо будете частью этого, либо будете читать об этом в Forbes.",
     background: "bg-gradient-to-br from-gray-900 via-gray-800 to-black"
-  },
+  }
 ];
 
 export const PitchDeck = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
   const handlePrevious = () => {
-    setCurrentSlide((prev) => (prev > 0 ? prev - 1 : prev));
+    setIsTransitioning(true);
+    setTimeout(() => {
+      setCurrentSlide((prev) => (prev > 0 ? prev - 1 : prev));
+      setIsTransitioning(false);
+    }, 100);
   };
 
   const handleNext = () => {
-    setCurrentSlide((prev) => (prev < slides.length - 1 ? prev + 1 : prev));
+    setIsTransitioning(true);
+    setTimeout(() => {
+      setCurrentSlide((prev) => (prev < slides.length - 1 ? prev + 1 : prev));
+      setIsTransitioning(false);
+    }, 100);
   };
 
   useEffect(() => {
@@ -98,6 +107,7 @@ export const PitchDeck = () => {
           content={slides[currentSlide].content}
           background={slides[currentSlide].background}
           isFirstSlide={slides[currentSlide].isFirstSlide}
+          isTransitioning={isTransitioning}
         />
       </AnimatePresence>
 

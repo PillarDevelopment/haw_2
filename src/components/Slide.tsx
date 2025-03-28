@@ -10,6 +10,7 @@ interface SlideProps {
   background: string;
   children?: ReactNode;
   isFirstSlide?: boolean;
+  isTransitioning?: boolean;
 }
 
 interface Particle {
@@ -21,7 +22,7 @@ interface Particle {
   color: string;
 }
 
-export const Slide = ({ title, subtitle, content, background, children, isFirstSlide }: SlideProps) => {
+export const Slide = ({ title, subtitle, content, background, children, isFirstSlide, isTransitioning }: SlideProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [particles, setParticles] = useState<Particle[]>([]);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
@@ -245,6 +246,35 @@ export const Slide = ({ title, subtitle, content, background, children, isFirstS
       >
         <div className="absolute inset-0 bg-white/5 rounded-full" />
       </motion.div>
+
+      {/* Flash Effect */}
+      <AnimatePresence>
+        {isTransitioning && (
+          <>
+            <motion.div
+              className="fixed inset-0 bg-white pointer-events-none z-[100]"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ 
+                duration: 0.1,
+                ease: "easeInOut"
+              }}
+            />
+            <motion.div
+              className="fixed inset-0 bg-white pointer-events-none z-[99]"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ 
+                duration: 0.2,
+                ease: "easeInOut",
+                delay: 0.05
+              }}
+            />
+          </>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 }; 
