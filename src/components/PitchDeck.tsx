@@ -66,16 +66,21 @@ const slides = [
 
 export const PitchDeck = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [direction, setDirection] = useState(0);
+
+  const handlePrevious = () => {
+    setCurrentSlide((prev) => (prev > 0 ? prev - 1 : prev));
+  };
+
+  const handleNext = () => {
+    setCurrentSlide((prev) => (prev < slides.length - 1 ? prev + 1 : prev));
+  };
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowRight') {
-        setDirection(1);
-        setCurrentSlide((prev) => Math.min(prev + 1, slides.length - 1));
-      } else if (e.key === 'ArrowLeft') {
-        setDirection(-1);
-        setCurrentSlide((prev) => Math.max(prev - 1, 0));
+      if (e.key === 'ArrowLeft') {
+        handlePrevious();
+      } else if (e.key === 'ArrowRight') {
+        handleNext();
       }
     };
 
@@ -83,25 +88,17 @@ export const PitchDeck = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  const handlePrevious = () => {
-    setDirection(-1);
-    setCurrentSlide((prev) => Math.max(prev - 1, 0));
-  };
-
-  const handleNext = () => {
-    setDirection(1);
-    setCurrentSlide((prev) => Math.min(prev + 1, slides.length - 1));
-  };
-
-  const handleDotClick = (index: number) => {
-    setDirection(index > currentSlide ? 1 : -1);
-    setCurrentSlide(index);
-  };
-
   return (
     <div className="fixed inset-0 w-full h-full overflow-hidden bg-black">
-      <AnimatePresence mode="wait" custom={direction}>
-        <Slide key={currentSlide} {...slides[currentSlide]} />
+      <AnimatePresence mode="wait">
+        <Slide
+          key={currentSlide}
+          title={slides[currentSlide].title}
+          subtitle={slides[currentSlide].subtitle}
+          content={slides[currentSlide].content}
+          background={slides[currentSlide].background}
+          isFirstSlide={slides[currentSlide].isFirstSlide}
+        />
       </AnimatePresence>
 
       <Navigation
@@ -109,7 +106,6 @@ export const PitchDeck = () => {
         totalSlides={slides.length}
         onPrevious={handlePrevious}
         onNext={handleNext}
-        onDotClick={handleDotClick}
       />
     </div>
   );
