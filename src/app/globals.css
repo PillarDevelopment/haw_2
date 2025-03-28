@@ -1,0 +1,223 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 255, 255, 255;
+  --background-start-rgb: 0, 0, 0;
+  --background-end-rgb: 0, 0, 0;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body,
+#__next {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: black;
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: black;
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Smooth transitions */
+* {
+  transition: background-color 0.3s ease;
+}
+
+/* Slide animations */
+.slide-enter {
+  opacity: 0;
+  transform: scale(0.95);
+}
+
+.slide-enter-active {
+  opacity: 1;
+  transform: scale(1);
+  transition: opacity 300ms, transform 300ms;
+}
+
+.slide-exit {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.slide-exit-active {
+  opacity: 0;
+  transform: scale(0.95);
+  transition: opacity 300ms, transform 300ms;
+}
+
+/* Gradient text */
+.gradient-text {
+  background: linear-gradient(to right, #ffffff, #a0aec0);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+}
+
+/* Animated background */
+.animated-bg {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(255,255,255,0.1) 0%, transparent 70%);
+  animation: pulse 4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 0.3; }
+  50% { opacity: 0.5; }
+  100% { opacity: 0.3; }
+}
+
+/* Grid effect */
+.grid-effect {
+  background-image: 
+    linear-gradient(to right, rgba(255,255,255,0.1) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255,255,255,0.1) 1px, transparent 1px);
+  background-size: 50px 50px;
+  animation: gridMove 20s linear infinite;
+}
+
+@keyframes gridMove {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(50px); }
+}
+
+/* Glow effect */
+.glow {
+  position: relative;
+}
+
+.glow::after {
+  content: '';
+  position: absolute;
+  inset: -10px;
+  background: radial-gradient(circle at center, rgba(255,255,255,0.2) 0%, transparent 70%);
+  filter: blur(20px);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.glow:hover::after {
+  opacity: 1;
+}
+
+/* Particle effect */
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  filter: blur(1px);
+}
+
+/* Slide content */
+.slide-content {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  position: relative;
+  z-index: 10;
+}
+
+.slide-text {
+  max-width: 90vw;
+  width: 100%;
+  text-align: center;
+  margin: 0 auto;
+}
+
+/* Responsive text sizes */
+@media (min-width: 1536px) {
+  .slide-text {
+    max-width: 80vw;
+  }
+  
+  .slide-text h1 {
+    font-size: 6rem;
+  }
+  
+  .slide-text p {
+    font-size: 2.5rem;
+  }
+}
+
+@media (max-width: 1535px) {
+  .slide-text h1 {
+    font-size: 5rem;
+  }
+  
+  .slide-text p {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 1024px) {
+  .slide-text h1 {
+    font-size: 4rem;
+  }
+  
+  .slide-text p {
+    font-size: 1.75rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .slide-text h1 {
+    font-size: 3rem;
+  }
+  
+  .slide-text p {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .slide-text {
+    max-width: 95vw;
+  }
+  
+  .slide-text h1 {
+    font-size: 2.5rem;
+  }
+  
+  .slide-text p {
+    font-size: 1.25rem;
+  }
+}
