@@ -2,8 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { AnimatePresence } from 'framer-motion';
-import { Slide } from './Slide';
-import { Navigation } from './Navigation';
+import Slide from './Slide';
 
 const slides = [
   {
@@ -64,24 +63,28 @@ const slides = [
   }
 ];
 
-export const PitchDeck = () => {
+const PitchDeck = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
 
   const handlePrevious = () => {
-    setIsTransitioning(true);
-    setTimeout(() => {
-      setCurrentSlide((prev) => (prev > 0 ? prev - 1 : prev));
-      setIsTransitioning(false);
-    }, 100);
+    if (currentSlide > 0) {
+      setIsTransitioning(true);
+      setTimeout(() => {
+        setCurrentSlide(prev => prev - 1);
+        setIsTransitioning(false);
+      }, 100);
+    }
   };
 
   const handleNext = () => {
-    setIsTransitioning(true);
-    setTimeout(() => {
-      setCurrentSlide((prev) => (prev < slides.length - 1 ? prev + 1 : prev));
-      setIsTransitioning(false);
-    }, 100);
+    if (currentSlide < slides.length - 1) {
+      setIsTransitioning(true);
+      setTimeout(() => {
+        setCurrentSlide(prev => prev + 1);
+        setIsTransitioning(false);
+      }, 100);
+    }
   };
 
   useEffect(() => {
@@ -110,13 +113,8 @@ export const PitchDeck = () => {
           isTransitioning={isTransitioning}
         />
       </AnimatePresence>
-
-      <Navigation
-        currentSlide={currentSlide}
-        totalSlides={slides.length}
-        onPrevious={handlePrevious}
-        onNext={handleNext}
-      />
     </div>
   );
-}; 
+};
+
+export default PitchDeck; 

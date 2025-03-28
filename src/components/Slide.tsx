@@ -22,7 +22,7 @@ interface Particle {
   color: string;
 }
 
-export const Slide = ({ title, subtitle, content, background, children, isFirstSlide, isTransitioning }: SlideProps) => {
+const Slide = ({ title, subtitle, content, background, children, isFirstSlide, isTransitioning }: SlideProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [particles, setParticles] = useState<Particle[]>([]);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
@@ -277,4 +277,6 @@ export const Slide = ({ title, subtitle, content, background, children, isFirstS
       </AnimatePresence>
     </motion.div>
   );
-}; 
+};
+
+export default Slide; 
