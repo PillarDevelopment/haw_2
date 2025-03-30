@@ -22,6 +22,164 @@ interface Particle {
   color: string;
 }
 
+interface Connection {
+  startX: number;
+  startY: number;
+  endX: number;
+  endY: number;
+  duration: number;
+  delay: number;
+}
+
+const generateLightningPath = (startX: number, startY: number, endX: number, endY: number): string => {
+  const points = [];
+  points.push(`M ${startX} ${startY}`);
+  
+  const segments = 4; // Number of lightning segments
+  const dx = (endX - startX) / segments;
+  const dy = (endY - startY) / segments;
+  
+  for (let i = 1; i < segments; i++) {
+    const offset = (Math.random() - 0.5) * 50; // Random offset for zigzag effect
+    points.push(`L ${startX + dx * i + offset} ${startY + dy * i + offset}`);
+  }
+  
+  points.push(`L ${endX} ${endY}`);
+  return points.join(' ');
+};
+
+const GlobalPaymentEffect = () => {
+  const [nodes, setNodes] = useState<Particle[]>([]);
+  const [connections, setConnections] = useState<Connection[]>([]);
+  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+
+  useEffect(() => {
+    const updateDimensions = () => {
+      if (typeof window !== 'undefined') {
+        setDimensions({
+          width: window.innerWidth,
+          height: window.innerHeight
+        });
+      }
+    };
+
+    updateDimensions();
+    window.addEventListener('resize', updateDimensions);
+
+    // Create payment nodes (cities/points)
+    const newNodes = Array.from({ length: 15 }).map(() => ({
+      x: Math.random() * window.innerWidth,
+      y: Math.random() * window.innerHeight,
+      duration: Math.random() * 2 + 1,
+      size: Math.random() * 6 + 4,
+      opacity: Math.random() * 0.5 + 0.5,
+      color: `rgba(0, 255, ${Math.random() * 155 + 100}, ${Math.random() * 0.5 + 0.5})`
+    }));
+    setNodes(newNodes);
+
+    // Create connections between nodes
+    const newConnections = [];
+    for (let i = 0; i < 20; i++) {
+      const startNode = newNodes[Math.floor(Math.random() * newNodes.length)];
+      const endNode = newNodes[Math.floor(Math.random() * newNodes.length)];
+      newConnections.push({
+        startX: startNode.x,
+        startY: startNode.y,
+        endX: endNode.x,
+        endY: endNode.y,
+        duration: Math.random() * 3 + 2,
+        delay: Math.random() * 2
+      });
+    }
+    setConnections(newConnections);
+
+    return () => window.removeEventListener('resize', updateDimensions);
+  }, []);
+
+  return (
+    <div className="absolute inset-0 overflow-hidden">
+      {/* Payment nodes */}
+      {nodes.map((node, i) => (
+        <motion.div
+          key={`node-${i}`}
+          className="absolute rounded-full"
+          style={{
+            width: node.size,
+            height: node.size,
+            backgroundColor: node.color,
+            filter: 'blur(2px)',
+            x: node.x,
+            y: node.y
+          }}
+          animate={{
+            scale: [1, 1.5, 1],
+            opacity: [node.opacity, node.opacity * 1.5, node.opacity]
+          }}
+          transition={{
+            duration: node.duration,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+        />
+      ))}
+
+      {/* Lightning connections */}
+      <svg className="absolute inset-0 w-full h-full">
+        <defs>
+          <filter id="glow">
+            <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+            <feMerge>
+              <feMergeNode in="coloredBlur"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+        </defs>
+        {connections.map((connection, i) => (
+          <g key={`connection-${i}`}>
+            {/* Base lightning path */}
+            <motion.path
+              d={generateLightningPath(connection.startX, connection.startY, connection.endX, connection.endY)}
+              stroke="rgba(0, 255, 200, 0.3)"
+              strokeWidth="1"
+              fill="none"
+              filter="url(#glow)"
+              initial={{ pathLength: 0, opacity: 0 }}
+              animate={{
+                pathLength: [0, 1, 0],
+                opacity: [0, 0.8, 0]
+              }}
+              transition={{
+                duration: connection.duration,
+                delay: connection.delay,
+                repeat: Infinity,
+                ease: "linear"
+              }}
+            />
+            {/* Bright core of the lightning */}
+            <motion.path
+              d={generateLightningPath(connection.startX, connection.startY, connection.endX, connection.endY)}
+              stroke="rgba(255, 255, 255, 0.8)"
+              strokeWidth="0.5"
+              fill="none"
+              initial={{ pathLength: 0, opacity: 0 }}
+              animate={{
+                pathLength: [0, 1, 0],
+                opacity: [0, 1, 0]
+              }}
+              transition={{
+                duration: connection.duration * 0.8,
+                delay: connection.delay,
+                repeat: Infinity,
+                ease: "linear"
+              }}
+            />
+          </g>
+        ))}
+      </svg>
+    </div>
+  );
+};
+
 const Slide = ({ title, subtitle, content, background, children, isFirstSlide, isTransitioning }: SlideProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [particles, setParticles] = useState<Particle[]>([]);
@@ -158,6 +316,9 @@ const Slide = ({ title, subtitle, content, background, children, isFirstSlide, i
           />
         ))}
       </AnimatePresence>
+
+      {/* Global payment visualization for first slide */}
+      {isFirstSlide && <GlobalPaymentEffect />}
 
       <div className="slide-content">
         <div className="slide-text">
