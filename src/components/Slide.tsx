@@ -53,20 +53,11 @@ const generateLightningPath = (startX: number, startY: number, endX: number, end
 const GlobalPaymentEffect = () => {
   const [nodes, setNodes] = useState<Particle[]>([]);
   const [connections, setConnections] = useState<Connection[]>([]);
-  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
-
+  
   useEffect(() => {
     const updateDimensions = () => {
-      if (typeof window !== 'undefined') {
-        setDimensions({
-          width: window.innerWidth,
-          height: window.innerHeight
-        });
-      }
+      // Не используем setDimensions, так как эта переменная не нужна
     };
-
-    updateDimensions();
-    window.addEventListener('resize', updateDimensions);
 
     // Create payment nodes (cities/points)
     const newNodes = Array.from({ length: 15 }).map(() => ({
@@ -550,7 +541,7 @@ const WorldMapInfographic = () => {
             </div>
           </div>
           <p className="mt-2 text-sm text-gray-300 italic">
-            "Мой банк заблокировал платеж в Китай. Что делать?"
+            &quot;Мой банк заблокировал платеж в Китай. Что делать?&quot;
           </p>
         </motion.div>
       </div>
@@ -840,19 +831,12 @@ const MissionImpossibleVisualization = () => {
 
 const Slide = ({ title, subtitle, content, background, children, isFirstSlide, isTransitioning, isIntenseFlash, isMirrorEffect }: SlideProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [particles, setParticles] = useState<Particle[]>([]);
-  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
     const updateDimensions = () => {
-      if (typeof window !== 'undefined') {
-        setDimensions({
-          width: window.innerWidth,
-          height: window.innerHeight
-        });
-      }
+      // Нет необходимости обновлять dimensions, так как не используем эту переменную
     };
 
     updateDimensions();
@@ -860,15 +844,16 @@ const Slide = ({ title, subtitle, content, background, children, isFirstSlide, i
 
     // Initialize particles only on client side
     if (typeof window !== 'undefined') {
-      const newParticles = Array.from({ length: isFirstSlide ? 100 : 50 }).map(() => ({
-        x: Math.random() * window.innerWidth,
-        y: Math.random() * window.innerHeight,
-        duration: Math.random() * 15 + 10,
-        size: Math.random() * 4 + 1,
-        opacity: Math.random() * 0.5 + 0.2,
-        color: isFirstSlide ? `rgba(${Math.random() * 100 + 155}, ${Math.random() * 100 + 155}, 255, ${Math.random() * 0.5 + 0.2})` : 'rgba(255, 255, 255, 0.2)'
-      }));
-      setParticles(newParticles);
+      // setParticles не нужен, так как переменная не используется
+      // const newParticles = Array.from({ length: isFirstSlide ? 100 : 50 }).map(() => ({
+      //   x: Math.random() * window.innerWidth,
+      //   y: Math.random() * window.innerHeight,
+      //   duration: Math.random() * 15 + 10,
+      //   size: Math.random() * 4 + 1,
+      //   opacity: Math.random() * 0.5 + 0.2,
+      //   color: isFirstSlide ? `rgba(${Math.random() * 100 + 155}, ${Math.random() * 100 + 155}, 255, ${Math.random() * 0.5 + 0.2})` : 'rgba(255, 255, 255, 0.2)'
+      // }));
+      // setParticles(newParticles);
     }
 
     return () => window.removeEventListener('resize', updateDimensions);
