@@ -26,7 +26,7 @@ const slides = [
     title: "Боль",
     content: "В 2024 году 68% компаний из РФ столкнулись с отказами в платежах",
     background: "bg-gradient-to-br from-red-900 via-red-700 to-black",
-    isMirrorEffect: true
+    isMirrorEffect: false
   },
   {
     id: 4,
