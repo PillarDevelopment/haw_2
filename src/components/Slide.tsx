@@ -12,6 +12,7 @@ interface SlideProps {
   isFirstSlide?: boolean;
   isTransitioning?: boolean;
   isIntenseFlash?: boolean;
+  isMirrorEffect?: boolean;
 }
 
 interface Particle {
@@ -217,6 +218,7 @@ const AnimatedEarth = () => {
 // World Map Infographic with Blocked Payments Animation
 const WorldMapInfographic = () => {
   const [blockedPayments, setBlockedPayments] = useState<Array<{from: [number, number], to: [number, number], id: number}>>([]);
+  const [showStatText, setShowStatText] = useState(false);
   
   useEffect(() => {
     // Define coordinates for countries and global financial centers
@@ -261,12 +263,26 @@ const WorldMapInfographic = () => {
     
     setBlockedPayments(generateBlockedPayments());
     
+    // Show statistics text after animation completes
+    const statTimer = setTimeout(() => {
+      setShowStatText(true);
+    }, 6000);
+    
     // Periodically regenerate the blocked payments
     const interval = setInterval(() => {
       setBlockedPayments(generateBlockedPayments());
+      setShowStatText(false);
+      
+      // Show statistics text after each new animation completes
+      setTimeout(() => {
+        setShowStatText(true);
+      }, 6000);
     }, 10000);
     
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+      clearTimeout(statTimer);
+    };
   }, []);
   
   return (
@@ -494,12 +510,26 @@ const WorldMapInfographic = () => {
           <path d="M80,50 L85,60 L90,65" stroke="#CBD5E0" strokeWidth="0.2" fill="none" /> {/* Poland-Slovakia-Hungary border */}
           <path d="M90,65 L95,70 L100,72" stroke="#CBD5E0" strokeWidth="0.2" fill="none" /> {/* Hungary-Romania border */}
           <path d="M100,72 L105,75 L110,78" stroke="#CBD5E0" strokeWidth="0.2" fill="none" /> {/* Romania-Bulgaria border */}
-          
-          {/* Text overlay */}
-          <text x="100" y="135" fill="white" fontSize="6" textAnchor="middle" fontWeight="bold">
-            68% компаний из РФ столкнулись с отказами в платежах
-          </text>
         </svg>
+        
+        {/* Statistics text that appears after animation */}
+        <AnimatePresence>
+          {showStatText && (
+            <motion.div 
+              className="absolute bottom-5 left-0 right-0 flex justify-center"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+            >
+              <div className="bg-black/70 px-8 py-4 rounded-xl border border-red-800">
+                <h2 className="text-5xl font-bold text-white text-center">
+                  В 2024 году 68% компаний из РФ столкнулись с отказами в платежах
+                </h2>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
         
         {/* Businessman quote */}
         <motion.div 
@@ -528,7 +558,287 @@ const WorldMapInfographic = () => {
   );
 };
 
-const Slide = ({ title, subtitle, content, background, children, isFirstSlide, isTransitioning, isIntenseFlash }: SlideProps) => {
+// Mission Impossible style visualization component
+const MissionImpossibleVisualization = () => {
+  const [showCheckmark, setShowCheckmark] = useState(false);
+  
+  useEffect(() => {
+    // Show checkmark after a delay
+    const timer = setTimeout(() => {
+      setShowCheckmark(true);
+    }, 2500);
+    
+    return () => clearTimeout(timer);
+  }, []);
+  
+  return (
+    <div className="absolute inset-0 flex items-center justify-center overflow-hidden z-0">
+      <div className="relative w-[90%] max-w-5xl pt-40">
+        {/* Background grid pattern inspired by Mission Impossible */}
+        <motion.div 
+          className="absolute inset-0 -z-10"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 0.2 }}
+          transition={{ duration: 1 }}
+        >
+          <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(0,255,120,0.1)_1px,transparent_1px),linear-gradient(0deg,rgba(0,255,120,0.1)_1px,transparent_1px)] bg-[size:20px_20px]" />
+        </motion.div>
+        
+        {/* Connection lines */}
+        <svg className="absolute w-full h-full top-0 left-0 z-0">
+          <motion.path
+            d="M 250,130 L 490,130"
+            stroke="rgba(255, 255, 255, 0.5)"
+            strokeWidth="3"
+            fill="none"
+            strokeDasharray="10 5"
+            initial={{ pathLength: 0 }}
+            animate={{ pathLength: 1 }}
+            transition={{ duration: 1.5, delay: 0.5 }}
+          />
+          <motion.path
+            d="M 550,130 L 790,130"
+            stroke="rgba(255, 255, 255, 0.5)"
+            strokeWidth="3"
+            fill="none"
+            strokeDasharray="10 5"
+            initial={{ pathLength: 0 }}
+            animate={{ pathLength: 1 }}
+            transition={{ duration: 1.5, delay: 2 }}
+          />
+        </svg>
+        
+        <div className="flex justify-between items-center h-60">
+          {/* Bank Node */}
+          <motion.div
+            className="flex flex-col items-center"
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ type: "spring", stiffness: 260, damping: 20 }}
+          >
+            <div className="relative w-32 h-32 bg-red-500/30 rounded-full flex items-center justify-center mb-4 border-2 border-white/20">
+              <motion.div
+                className="absolute inset-[6px] rounded-full border-[3px] border-dashed border-red-500/70"
+                animate={{ rotate: 360 }}
+                transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
+              />
+              <motion.div
+                className="text-7xl z-10"
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 0.3, type: "spring" }}
+              >
+              </motion.div>
+              
+              {/* Red cross animation */}
+              <motion.div
+                className="absolute"
+                initial={{ opacity: 0, scale: 0 }}
+                animate={{ opacity: showCheckmark ? 0 : 1, scale: showCheckmark ? 0 : 1 }}
+                transition={{ duration: 0.3 }}
+              >
+                <div className="relative">
+                  <motion.div
+                    className="absolute w-12 h-3 bg-red-600 rounded-md top-0"
+                    initial={{ rotate: 0 }}
+                    animate={{ rotate: 45 }}
+                    transition={{ duration: 0.5, delay: 1 }}
+                  />
+                  <motion.div
+                    className="absolute w-12 h-3 bg-red-600 rounded-md top-0"
+                    initial={{ rotate: 0 }}
+                    animate={{ rotate: -45 }}
+                    transition={{ duration: 0.5, delay: 1 }}
+                  />
+                </div>
+              </motion.div>
+              
+              {/* Green checkmark animation */}
+              <motion.div
+                className="absolute"
+                initial={{ opacity: 0, scale: 0 }}
+                animate={{ opacity: showCheckmark ? 1 : 0, scale: showCheckmark ? 1 : 0 }}
+                transition={{ duration: 0.5 }}
+              >
+                <div className="relative">
+                  <motion.div
+                    className="absolute w-8 h-3 bg-green-500 rounded-md"
+                    style={{ top: '5px', left: '-5px' }}
+                    initial={{ rotate: 0 }}
+                    animate={{ rotate: 45 }}
+                  />
+                  <motion.div
+                    className="absolute w-12 h-3 bg-green-500 rounded-md"
+                    style={{ top: '0px', left: '0px' }}
+                    initial={{ rotate: 0 }}
+                    animate={{ rotate: -45 }}
+                  />
+                </div>
+              </motion.div>
+            </div>
+            <motion.div
+              className="text-white text-2xl font-bold"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5 }}
+            >
+            </motion.div>
+            <motion.div
+              className="text-gray-300 text-sm mt-1 max-w-[180px] text-center"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.7 }}
+            >
+            </motion.div>
+          </motion.div>
+          
+          {/* Platform Node */}
+          <motion.div
+            className="flex flex-col items-center"
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ type: "spring", stiffness: 260, damping: 20, delay: 1 }}
+          >
+            <div className="w-32 h-32 bg-green-500/30 rounded-full flex items-center justify-center mb-4 border-2 border-white/20">
+              <motion.div
+                className="absolute inset-[6px] rounded-full border-[3px] border-dashed border-green-500/70"
+                animate={{ rotate: 360 }}
+                transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+              />
+              <motion.div
+                className="relative text-6xl z-10"
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 1.3, type: "spring", stiffness: 260, damping: 20 }}
+              >
+                <div className="relative">
+                  <span>🛡️</span>
+                  {/* Small check icon */}
+                  <motion.span
+                    className="absolute -top-2 -right-2 text-xl"
+                    initial={{ opacity: 0, scale: 0 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 2, duration: 0.3 }}
+                  >
+                  </motion.span>
+                </div>
+              </motion.div>
+
+              {/* Add a separate animation for the bounce effect */}
+              <motion.div
+                className="absolute inset-0 z-10 pointer-events-none"
+                initial={{ scale: 1 }}
+                animate={{ scale: [1, 1.2, 1] }}
+                transition={{ 
+                  delay: 1.5,
+                  duration: 0.7, 
+                  ease: "easeInOut"
+                }}
+              />
+
+              {/* Add a separate animation for the rotation */}
+              <motion.div
+                className="absolute inset-0 z-10 pointer-events-none"
+                initial={{ rotate: 0 }}
+                animate={{ rotate: [0, 15, 0, -15, 0] }}
+                transition={{ 
+                  delay: 1.8,
+                  duration: 0.5, 
+                  ease: "easeInOut"
+                }}
+              />
+            </div>
+            <motion.div
+              className="text-white text-2xl font-bold"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 1.5 }}
+            >
+            </motion.div>
+            <motion.div
+              className="text-gray-300 text-sm mt-1 max-w-[180px] text-center"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 1.7 }}
+            >
+            </motion.div>
+          </motion.div>
+          
+          {/* Crypto Wallet Node */}
+          <motion.div
+            className="flex flex-col items-center"
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ type: "spring", stiffness: 260, damping: 20, delay: 2 }}
+          >
+            <div className="w-32 h-32 bg-blue-500/30 rounded-full flex items-center justify-center mb-4 border-2 border-white/20">
+              <motion.div
+                className="absolute inset-[6px] rounded-full border-[3px] border-dashed border-blue-500/70"
+                animate={{ rotate: 360 }}
+                transition={{ duration: 30, repeat: Infinity, ease: "linear", direction: "reverse" }}
+              />
+              <motion.div
+                className="text-7xl z-10"
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 2.3, type: "spring" }}
+              >
+              </motion.div>
+
+              {/* Add a separate animation for the rotation */}
+              <motion.div
+                className="absolute inset-0 z-10 pointer-events-none"
+                initial={{ rotate: 0 }}
+                animate={{ rotate: [-10, 10, -5, 5, 0] }}
+                transition={{ 
+                  delay: 2.8,
+                  duration: 0.8, 
+                  ease: "easeInOut"
+                }}
+              />
+            </div>
+            <motion.div
+              className="text-white text-2xl font-bold"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 2.5 }}
+            >
+            </motion.div>
+            <motion.div
+              className="text-gray-300 text-sm mt-1 max-w-[180px] text-center"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 2.7 }}
+            >
+            </motion.div>
+          </motion.div>
+        </div>
+        
+        {/* Code-like elements */}
+        <motion.div
+          className="absolute -bottom-10 left-0 w-full overflow-hidden h-20"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 0.7 }}
+          transition={{ delay: 3, duration: 1 }}
+        >
+          <motion.pre
+            className="text-green-500 text-xs font-mono"
+            initial={{ y: 100 }}
+            animate={{ y: 0 }}
+            transition={{ delay: 3, duration: 1 }}
+          >
+            {`>> Initializing secure bridge protocol...
+>> Connection established. Transaction success rate: 99.8%
+>> Smart contract deployed: 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
+>> Funds transfer complete. Untraceable. Secure. Fast.`}
+          </motion.pre>
+        </motion.div>
+      </div>
+    </div>
+  );
+};
+
+const Slide = ({ title, subtitle, content, background, children, isFirstSlide, isTransitioning, isIntenseFlash, isMirrorEffect }: SlideProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [particles, setParticles] = useState<Particle[]>([]);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
@@ -582,6 +892,70 @@ const Slide = ({ title, subtitle, content, background, children, isFirstSlide, i
       
       {/* World Map infographic for second slide */}
       {title === "Боль рынка" && <WorldMapInfographic />}
+      
+      {/* Mission Impossible visualization for the "Решение" slide */}
+      {title === "Решение" && <MissionImpossibleVisualization />}
+
+      {/* Mirror Effect for the mirror slide */}
+      {isMirrorEffect && (
+        <motion.div
+          className="absolute inset-0 overflow-hidden"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1.5 }}
+        >
+          {/* Reflective surface with perspective */}
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-gray-900/30 to-black/70">
+            <motion.div
+              className="absolute inset-0"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: [0, 0.3, 0.2, 0.4, 0.2] }}
+              transition={{ duration: 8, repeat: Infinity, repeatType: "reverse" }}
+            >
+              <div className="w-full h-full bg-[linear-gradient(90deg,rgba(255,255,255,0.1)_1px,transparent_1px),linear-gradient(180deg,rgba(255,255,255,0.1)_1px,transparent_1px)] bg-[size:60px_30px] transform rotate-x-60 perspective-900 skew-y-6 translate-z-0 opacity-20" />
+            </motion.div>
+            
+            {/* Reflection lines */}
+            {Array.from({ length: 8 }).map((_, i) => (
+              <motion.div
+                key={`reflection-${i}`}
+                className="absolute inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-white/30 to-transparent"
+                style={{ top: `${15 + i * 10}%` }}
+                initial={{ scaleX: 0, opacity: 0 }}
+                animate={{ 
+                  scaleX: [0, 1, 0.8, 1, 0],
+                  opacity: [0, 0.4, 0.3, 0.5, 0]
+                }}
+                transition={{ 
+                  duration: 6 + i * 0.5, 
+                  repeat: Infinity, 
+                  repeatType: "reverse",
+                  delay: i * 0.5
+                }}
+              />
+            ))}
+            
+            {/* Reflection glints */}
+            {Array.from({ length: 15 }).map((_, i) => (
+              <motion.div
+                key={`glint-${i}`}
+                className="absolute w-[2px] h-[2px] bg-white rounded-full"
+                style={{ 
+                  left: `${Math.random() * 100}%`, 
+                  top: `${Math.random() * 100}%` 
+                }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: [0, 0.8, 0] }}
+                transition={{ 
+                  duration: 2 + Math.random() * 3, 
+                  repeat: Infinity, 
+                  delay: Math.random() * 5 
+                }}
+              />
+            ))}
+          </div>
+        </motion.div>
+      )}
 
       {/* Animated background elements for all slides */}
       <motion.div
@@ -593,89 +967,53 @@ const Slide = ({ title, subtitle, content, background, children, isFirstSlide, i
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent" />
       </motion.div>
 
-      {/* Global payment network effect */}
-      <motion.div
-        className="absolute inset-0"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 0.3 }}
-        transition={{ duration: 2 }}
-      >
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.1)_0%,transparent_70%)]" />
-      </motion.div>
-
-      {/* Animated grid lines */}
-      <motion.div
-        className="absolute inset-0"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 0.1 }}
-        transition={{ duration: 2 }}
-      >
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.1)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.1)_1px,transparent_1px)] bg-[size:50px_50px]" />
-      </motion.div>
-
-      {/* Animated connection lines */}
-      <motion.div
-        className="absolute inset-0"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 0.2 }}
-        transition={{ duration: 2 }}
-      >
-        <svg className="absolute inset-0 w-full h-full">
-          {Array.from({ length: 20 }).map((_, i) => (
-            <motion.line
-              key={i}
-              x1={Math.random() * dimensions.width}
-              y1={Math.random() * dimensions.height}
-              x2={Math.random() * dimensions.width}
-              y2={Math.random() * dimensions.height}
-              stroke="rgba(255,255,255,0.1)"
-              strokeWidth="1"
-              initial={{ pathLength: 0 }}
-              animate={{ pathLength: 1 }}
-              transition={{ duration: 2, repeat: Infinity, delay: i * 0.1 }}
-            />
-          ))}
-        </svg>
-      </motion.div>
-
-      {/* Floating particles */}
-      <AnimatePresence>
-        {particles.map((particle, i) => (
-          <motion.div
-            key={i}
-            className="absolute rounded-full particle"
-            style={{
-              width: particle.size,
-              height: particle.size,
-              backgroundColor: particle.color,
-              opacity: particle.opacity
-            }}
-            initial={{
-              x: particle.x,
-              y: particle.y,
-              scale: 0,
-              opacity: 0
-            }}
-            animate={{
-              x: Math.random() * dimensions.width,
-              y: Math.random() * dimensions.height,
-              scale: [0, 1, 0],
-              opacity: [0, particle.opacity, 0]
-            }}
-            transition={{
-              duration: particle.duration,
-              repeat: Infinity,
-              ease: "linear"
-            }}
-          />
-        ))}
-      </AnimatePresence>
-
       {/* Global payment visualization for first slide */}
       {isFirstSlide && <GlobalPaymentEffect />}
 
-      <div className="slide-content">
-        <div className="slide-text">
+      <div className="slide-content relative">
+        {/* Mirror effect divider line */}
+        {isMirrorEffect && (
+          <motion.div 
+            className="absolute left-0 right-0 h-[2px] bottom-[-80px]"
+            initial={{ scaleX: 0, opacity: 0 }}
+            animate={{ scaleX: 1, opacity: 1 }}
+            transition={{ duration: 1.5, delay: 0.5 }}
+          >
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-red-500/70 to-transparent" />
+            
+            {/* Water ripple effects */}
+            <motion.div 
+              className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent h-px"
+              animate={{ 
+                opacity: [0, 0.7, 0],
+                scaleX: [0.3, 1, 0.7],
+                x: [-50, 0, 50]
+              }}
+              transition={{ 
+                duration: 5, 
+                repeat: Infinity, 
+                repeatType: "loop"
+              }}
+            />
+            
+            <motion.div 
+              className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent h-px"
+              animate={{ 
+                opacity: [0, 0.5, 0],
+                scaleX: [0.5, 0.8, 0.3],
+                x: [30, 0, -30]
+              }}
+              transition={{ 
+                duration: 7, 
+                repeat: Infinity, 
+                repeatType: "loop",
+                delay: 1
+              }}
+            />
+          </motion.div>
+        )}
+
+        <div className={`slide-text ${isMirrorEffect ? 'bg-black/40 px-16 py-10 rounded-2xl backdrop-blur-lg' : ''}`}>
           <motion.h1
             initial={{ y: 50, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
@@ -687,6 +1025,8 @@ const Slide = ({ title, subtitle, content, background, children, isFirstSlide, i
             }}
             className={`text-8xl font-bold mb-8 gradient-text glow ${
               isFirstSlide ? 'tracking-tight' : ''
+            } ${
+              isMirrorEffect ? 'text-center text-red-500' : ''
             }`}
           >
             {title}
@@ -720,6 +1060,8 @@ const Slide = ({ title, subtitle, content, background, children, isFirstSlide, i
               }}
               className={`text-4xl font-medium leading-relaxed glow ${
                 isFirstSlide ? 'text-gray-400' : ''
+              } ${
+                isMirrorEffect ? 'text-center text-white' : ''
               }`}
             >
               {content}
@@ -741,6 +1083,92 @@ const Slide = ({ title, subtitle, content, background, children, isFirstSlide, i
           )}
         </div>
       </div>
+
+      {/* Reflection effect - render a mirrored, semi-transparent, and distorted copy of the content below */}
+      {isMirrorEffect && (
+        <motion.div 
+          className="absolute inset-x-0 bottom-0 overflow-hidden"
+          style={{ top: '55%' }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 0.7 }}
+          transition={{ duration: 1 }}
+        >
+          {/* Water ripple effect overlay */}
+          <motion.div
+            className="absolute inset-0 z-10 opacity-30"
+            style={{
+              background: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='20' viewBox='0 0 100 20'%3E%3Cpath fill='none' stroke='%23ffffff' stroke-width='0.5' d='M0,10 Q25,5 50,10 T100,10'/%3E%3C/svg%3E")`,
+              backgroundSize: '100px 20px'
+            }}
+            animate={{
+              backgroundPositionX: ['0px', '100px'],
+              backgroundPositionY: ['0px', '5px', '0px', '-5px', '0px']
+            }}
+            transition={{
+              x: { duration: 10, repeat: Infinity, ease: "linear" },
+              y: { duration: 8, repeat: Infinity, ease: "easeInOut" }
+            }}
+          />
+          
+          <motion.div
+            className="absolute inset-0 backdrop-blur-[1.5px]"
+            animate={{
+              backdropFilter: ['blur(1.5px)', 'blur(2px)', 'blur(1.7px)', 'blur(1.3px)', 'blur(1.5px)']
+            }}
+            transition={{
+              duration: 8,
+              repeat: Infinity,
+              repeatType: "reverse"
+            }}
+          />
+          
+          <motion.div
+            className="w-full h-full flex flex-col items-center justify-center transform scale-y-[-1] origin-top"
+            style={{ 
+              maskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.2) 100%)'
+            }}
+          >
+            <div className="slide-content relative z-0 transform translate-y-[-50%]">
+              <div className="slide-text">
+                <h1 className={`text-8xl font-bold mb-8 gradient-text ${isMirrorEffect ? 'text-center text-red-500/70' : ''}`}>
+                  {title}
+                </h1>
+                {content && (
+                  <p className={`text-4xl font-medium leading-relaxed ${isMirrorEffect ? 'text-center text-white/50' : ''}`}>
+                    {content}
+                  </p>
+                )}
+              </div>
+            </div>
+          </motion.div>
+          
+          {/* Occasional water drop ripples */}
+          {Array.from({ length: 5 }).map((_, i) => (
+            <motion.div
+              key={`ripple-${i}`}
+              className="absolute w-0 h-0 bg-transparent border-[5px] border-white/20 rounded-full z-20"
+              style={{ 
+                left: `${20 + Math.random() * 60}%`, 
+                top: `${Math.random() * 70}%`
+              }}
+              initial={{ width: 0, height: 0, opacity: 0, x: '-50%', y: '-50%' }}
+              animate={{ 
+                width: ['0px', '100px'],
+                height: ['0px', '100px'],
+                opacity: [0, 0.5, 0],
+                border: ['5px solid rgba(255,255,255,0.2)', '1px solid rgba(255,255,255,0)']
+              }}
+              transition={{ 
+                duration: 2,
+                repeat: Infinity,
+                repeatDelay: 5 + Math.random() * 10,
+                delay: i * 3,
+                ease: "easeOut"
+              }}
+            />
+          ))}
+        </motion.div>
+      )}
 
       {/* Glowing effect */}
       <motion.div
@@ -766,27 +1194,67 @@ const Slide = ({ title, subtitle, content, background, children, isFirstSlide, i
       <AnimatePresence>
         {isTransitioning && (
           <>
-            <motion.div
-              className="fixed inset-0 bg-white pointer-events-none z-[100]"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ 
-                duration: 0.1,
-                ease: "easeInOut"
-              }}
-            />
-            <motion.div
-              className="fixed inset-0 bg-white pointer-events-none z-[99]"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ 
-                duration: 0.2,
-                ease: "easeInOut",
-                delay: 0.05
-              }}
-            />
+            {isIntenseFlash ? (
+              // Intense flash effect for transition from slide 1 to 2
+              <>
+                <motion.div
+                  className="fixed inset-0 bg-white pointer-events-none z-[100]"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ 
+                    duration: 0.05,
+                    ease: "easeInOut"
+                  }}
+                />
+                <motion.div
+                  className="fixed inset-0 bg-white pointer-events-none z-[99]"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ 
+                    duration: 0.15,
+                    ease: "easeOut",
+                  }}
+                />
+                <motion.div
+                  className="fixed inset-0 bg-white pointer-events-none z-[98]"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ 
+                    duration: 0.25,
+                    ease: "easeOut",
+                    delay: 0.05
+                  }}
+                />
+              </>
+            ) : (
+              // Normal flash effect for other transitions
+              <>
+                <motion.div
+                  className="fixed inset-0 bg-white pointer-events-none z-[100]"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ 
+                    duration: 0.1,
+                    ease: "easeInOut"
+                  }}
+                />
+                <motion.div
+                  className="fixed inset-0 bg-white pointer-events-none z-[99]"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ 
+                    duration: 0.2,
+                    ease: "easeInOut",
+                    delay: 0.05
+                  }}
+                />
+              </>
+            )}
           </>
         )}
       </AnimatePresence>
