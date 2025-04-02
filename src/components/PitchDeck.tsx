@@ -66,13 +66,16 @@ const slides = [
 const PitchDeck = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [isIntenseFlash, setIsIntenseFlash] = useState(false);
 
   const handlePrevious = () => {
     if (currentSlide > 0) {
       setIsTransitioning(true);
+      setIsIntenseFlash(currentSlide === 1);
       setTimeout(() => {
         setCurrentSlide(prev => prev - 1);
         setIsTransitioning(false);
+        setIsIntenseFlash(false);
       }, 100);
     }
   };
@@ -80,9 +83,11 @@ const PitchDeck = () => {
   const handleNext = () => {
     if (currentSlide < slides.length - 1) {
       setIsTransitioning(true);
+      setIsIntenseFlash(currentSlide === 0);
       setTimeout(() => {
         setCurrentSlide(prev => prev + 1);
         setIsTransitioning(false);
+        setIsIntenseFlash(false);
       }, 100);
     }
   };
@@ -111,6 +116,7 @@ const PitchDeck = () => {
           background={slides[currentSlide].background}
           isFirstSlide={slides[currentSlide].isFirstSlide}
           isTransitioning={isTransitioning}
+          isIntenseFlash={isIntenseFlash}
         />
       </AnimatePresence>
     </div>
